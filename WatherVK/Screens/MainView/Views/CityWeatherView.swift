@@ -31,6 +31,7 @@ final class CityWeatherView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor =  Colors.text?.withAlphaComponent(0.3)
         tableView.layer.cornerRadius = 15
+        tableView.isHidden = true
         tableView.register(WeatherCell.self, forCellReuseIdentifier: "Cell")
         return tableView
     }()
@@ -43,7 +44,7 @@ final class CityWeatherView: UIView {
     
     private lazy var currentLabel: UILabel = {
         let currentLabel = UILabel()
-        currentLabel.text = "Тeкущее место"
+        tableView.isHidden = true
         currentLabel.textColor = Colors.text
         currentLabel.font = UIFont.boldSystemFont(ofSize: 25)
         currentLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -152,35 +153,35 @@ final class CityWeatherView: UIView {
             self.topView.rightAnchor.constraint(equalTo: self.rightAnchor),
             self.topView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
            
-            self.currentLabel.topAnchor.constraint(equalTo: self.layoutMarginsGuide.topAnchor, constant: 5),
+            self.currentLabel.topAnchor.constraint(equalTo: self.layoutMarginsGuide.topAnchor, constant: Layout.minTop),
             self.currentLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
             self.activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             self.activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             
-            self.currentCity.topAnchor.constraint(equalTo: currentLabel.bottomAnchor, constant: 10),
+            self.currentCity.topAnchor.constraint(equalTo: currentLabel.bottomAnchor, constant: Layout.minTop),
             self.currentCity.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.hstack.topAnchor.constraint(equalTo: currentCity.bottomAnchor, constant: 10),
+            self.hstack.topAnchor.constraint(equalTo: currentCity.bottomAnchor, constant: Layout.maxtop),
             self.hstack.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.currentDescription.topAnchor.constraint(equalTo: currentTemp.bottomAnchor, constant: 10),
+            self.currentDescription.topAnchor.constraint(equalTo: currentTemp.bottomAnchor, constant: Layout.maxtop),
             self.currentDescription.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.currentWind.topAnchor.constraint(equalTo: currentDescription.bottomAnchor, constant: 5),
+            self.currentWind.topAnchor.constraint(equalTo: currentDescription.bottomAnchor, constant: Layout.minTop),
             self.currentWind.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.maxTemp.topAnchor.constraint(equalTo: currentWind.bottomAnchor, constant: 5),
+            self.maxTemp.topAnchor.constraint(equalTo: currentWind.bottomAnchor, constant: Layout.minTop),
             self.maxTemp.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.minTemp.topAnchor.constraint(equalTo: maxTemp.bottomAnchor, constant: 5),
+            self.minTemp.topAnchor.constraint(equalTo: maxTemp.bottomAnchor, constant: Layout.minTop),
             self.minTemp.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             
-            self.tableView.heightAnchor.constraint(equalToConstant: 300),
+            self.tableView.heightAnchor.constraint(equalToConstant: Layout.TableView.height),
             
-            self.tableView.bottomAnchor.constraint(equalTo: self.layoutMarginsGuide.bottomAnchor, constant: 0),
-            self.tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10),
-            self.tableView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10),
+            self.tableView.bottomAnchor.constraint(equalTo: self.layoutMarginsGuide.bottomAnchor, constant: Layout.TableView.insets.bottom),
+            self.tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Layout.TableView.insets.left),
+            self.tableView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: Layout.TableView.insets.right),
         ])
     }
 }
@@ -191,20 +192,20 @@ extension CityWeatherView: DisplaysWeather {
     func displayError() {
         stopLoading()
         self.tableView.isHidden = true
-        self.currentLabel.text = "Город не найден"
+        self.currentLabel.text = Text.cityError
     }
     
     func configure(with viewModel: [WeatherModel]) {
         self.weatherData = viewModel
         if !viewModel.isEmpty {
-            currentLabel.text = "Тeкущее место"
+            currentLabel.text = Text.currentLocation
             currentCity.text = viewModel[0].cityName
             currentTemp.text = viewModel[0].temperature
             imageView.image = UIImage(systemName: viewModel[0].conditionName)
             currentDescription.text = viewModel[0].description
-            currentWind.text = "Cкорость ветра: " + viewModel[0].wind
-            maxTemp.text = "Maкс.темп: " + viewModel[0].maxTemp
-            minTemp.text = "Mин.темп: " + viewModel[0].minTemp
+            currentWind.text = Text.wind + viewModel[0].wind
+            maxTemp.text = Text.max + viewModel[0].maxTemp
+            minTemp.text = Text.min + viewModel[0].minTemp
         }
         tableView.reloadData()
     }
@@ -238,16 +239,15 @@ extension CityWeatherView: DisplaysWeather {
 // MARK: - UITableViewDelegate UITableViewDataSource
 extension CityWeatherView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       
         weatherData.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Погода на 5 дней"
+        Text.headerText
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        50
+        Layout.heightRow
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -258,4 +258,30 @@ extension CityWeatherView: UITableViewDataSource, UITableViewDelegate {
                         image: weatherData[indexPath.row].conditionName)
         return cell ?? UITableViewCell()
     }
+}
+
+extension CityWeatherView {
+    enum Layout {
+        static let heightRow: CGFloat = 50
+        static let minTop: CGFloat = 5
+        static let maxtop: CGFloat = 10
+        
+        enum TableView {
+            static let height: CGFloat = 300
+            static let insets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
+        }
+        
+        static let insets: UIEdgeInsets = UIEdgeInsets(top: 20, left: 5, bottom: -20, right: -10)
+    }
+    
+    enum Text {
+        static let headerText = "Погода на 5 дней"
+        static let cityError =  "Город не найден"
+        static let currentLocation = "Тeкущее место"
+        static let wind = "Cкорость ветра: "
+        static let max = "Maкс.темп: "
+        static let min = "Mин.темп: "
+    }
+    
+    
 }

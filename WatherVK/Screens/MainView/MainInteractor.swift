@@ -15,7 +15,7 @@ protocol WeatherInteractorProtocol {
 }
 
 final class MainInteractor: NSObject, WeatherInteractorProtocol {
-   
+    
     private let presenter: WeatherPresentationProtocol
     private let networkManager: NetworkServiceProtocol
     private let JSONCache: FileCaching
@@ -40,7 +40,7 @@ final class MainInteractor: NSObject, WeatherInteractorProtocol {
                 } else {
                     self.presenter.presentError()
                 }
-            case let .failure(error):
+            case .failure(_):
                 self.presenter.presentError()
             }
         }
@@ -59,7 +59,7 @@ final class MainInteractor: NSObject, WeatherInteractorProtocol {
                             case .success(_):
                                 print("success")
                             case let .failure(error):
-                              print(error.localizedDescription)
+                                print(error.localizedDescription)
                             }
                         }
                         self.JSONCache.add(city: items[0].cityName, models: items)
@@ -91,16 +91,15 @@ final class MainInteractor: NSObject, WeatherInteractorProtocol {
 extension MainInteractor: CLLocationManagerDelegate {
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-//        locationManager.requestLocation()
-//        locationManager.startUpdatingLocation()
-//        locationManager.stopUpdatingLocation()
+        //        locationManager.requestLocation()
+        //        locationManager.startUpdatingLocation()
+        //        locationManager.stopUpdatingLocation()
         //self.fetchWeatherWithCoordinates(
         //    lat:  locationManager.location?.coordinate.latitude ??  55.755786 ,
         //    lon: locationManager.location?.coordinate.longitude ?? 37.617633)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print(locations)
         locationManager.stopUpdatingLocation()
         if let location = locations.last {
             let lat = location.coordinate.latitude

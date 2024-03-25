@@ -10,6 +10,7 @@ import UIKit
 protocol SearchViewDelegate: AnyObject {
     func openWeather(of city: String)
 }
+
 protocol DisplayList: AnyObject {
     func displayCachedCities(list: [String])
     func reloadData()
@@ -32,7 +33,6 @@ class SearchViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -48,7 +48,6 @@ extension SearchViewController: CellActionHandleProtocol {
     }
     
     func showWheather(city: String) {
-        print(city, "cityyyyy")
         let vc = MainModuleBuilder().build(context: city)
         self.navigationController?.pushViewController(vc, animated: true)
     }

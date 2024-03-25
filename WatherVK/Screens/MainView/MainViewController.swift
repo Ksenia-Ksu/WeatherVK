@@ -41,13 +41,6 @@ final class MainViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        contentView.startLoading()
-        if let city = openWithCity {
-            contentView.startLoading()
-            self.interactor.fetchWeatherWithCity(name: city)
-        } else {
-            self.interactor.loadLocation()
-        }
         navBarSetup()
     }
     // MARK: - navBarSetup
@@ -59,6 +52,8 @@ final class MainViewController: UIViewController {
         let left = UIBarButtonItem(image: UIImage(systemName: SFSymbols.geoPoint ), style: .plain, target: self, action: #selector(checkLocation(sender:)))
         left.tintColor = Colors.text
         navigationItem.leftBarButtonItem = left
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     @objc func openSearch(sender: UIBarButtonItem) {
@@ -67,7 +62,8 @@ final class MainViewController: UIViewController {
     }
     
     @objc func checkLocation(sender: UIBarButtonItem) {
-        interactor.loadLocation()
+        self.contentView.startLoading()
+        self.interactor.loadLocation()
     }
 }
 // MARK: - DisplayModels
@@ -78,6 +74,7 @@ extension MainViewController: DisplayModels {
     
     func displayCachedModels(_ viewModel: [WeatherModel]) {
         self.contentView.configure(with: viewModel)
+        self.contentView.stopLoading()
     }
     
     func displayFetchedModels(_ viewModel: [WeatherModel]) {

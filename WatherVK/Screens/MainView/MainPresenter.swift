@@ -10,7 +10,6 @@ import Foundation
 protocol WeatherPresentationProtocol {
     func presentData(_ response: [WeatherModel])
     func presentError()
-    func presentFromCache()
 }
 
 final class MainPresenter: WeatherPresentationProtocol {
@@ -38,7 +37,4 @@ final class MainPresenter: WeatherPresentationProtocol {
         self.controller?.displayError()
     }
     
-    func presentFromCache() {
-        
-    }
 }

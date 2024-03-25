@@ -50,7 +50,6 @@ final class NetworkService: NetworkServiceProtocol {
     func getCityWheatherWith(name: String, completion: @escaping (Result<[WeatherModel], any Error>) -> Void) {
         queue.async {
             let url = "\(self.weatherURL)&q=\(name)&appid=\(self.api)"
-            print(url, url)
             guard let url = URL(string: url)   else { return }
             let session = URLSession(configuration: .default)
             let request = URLRequest(url: url)

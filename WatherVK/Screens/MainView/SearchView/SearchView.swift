@@ -38,7 +38,6 @@ final class SearchView: UIView {
         tableView.isUserInteractionEnabled = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        //tableView.backgroundColor = UIColor.clear
         tableView.backgroundColor = Colors.background
         return tableView
     }()
@@ -60,9 +59,7 @@ final class SearchView: UIView {
     }
     
     private func setupView() {
-        //self.backgroundColor = UIColor.clear
         self.backgroundColor = Colors.background
-        //self.addSubview(imageView)
         self.addSubview(search)
         self.addSubview(tableView)
     }
@@ -70,19 +67,14 @@ final class SearchView: UIView {
     private func setupConstraint() {
         NSLayoutConstraint.activate([
             
-//            self.imageView.topAnchor.constraint(equalTo: self.topAnchor),
-//            self.imageView.leftAnchor.constraint(equalTo: self.leftAnchor),
-//            self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor),
-//            self.imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            
             self.search.topAnchor.constraint(equalTo: self.layoutMarginsGuide.topAnchor, constant: 0),
             self.search.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
             self.search.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
             
-            self.tableView.topAnchor.constraint(equalTo: self.search.bottomAnchor, constant: 20),
-            self.tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5),
-            self.tableView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10),
-            self.tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -20),
+            self.tableView.topAnchor.constraint(equalTo: self.search.bottomAnchor, constant: Layout.insets.top),
+            self.tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Layout.insets.left),
+            self.tableView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: Layout.insets.right),
+            self.tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: Layout.insets.bottom),
         ])
     }
 }
@@ -97,14 +89,13 @@ extension SearchView: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
         var content = cell?.defaultContentConfiguration()
         content?.text = cities[indexPath.row]
+        content?.textProperties.color = Colors.text ?? .white
         cell?.contentConfiguration = content
-        //cell?.contentView.backgroundColor = Colors.background
         cell?   .backgroundColor = UIColor.clear
         return cell ?? UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath.row)
         self.delegate?.showWheather(city: cities[indexPath.row])
     }
     
@@ -136,5 +127,11 @@ extension SearchView: SearcBarHandleProtocol {
     
     func searchBarIsCanceled() {
         search.text = ""
+    }
+}
+
+extension SearchView {
+    enum Layout {
+        static let insets: UIEdgeInsets = UIEdgeInsets(top: 20, left: 5, bottom: -20, right: -10)
     }
 }
