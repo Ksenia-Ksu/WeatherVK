@@ -4,8 +4,8 @@
 * iOS 16+
 * UiKit
 * VIP (Clean Swift)
-* Search by location
-* Search by city
+* Search by city coordinates with CoreLocation
+* Search by city name
 * Dark and light themes
 * Cache
 
